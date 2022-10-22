@@ -1,6 +1,5 @@
 # setup stuff here
 import os
-from random import randrange
 
 # This line has to come before import pygame
 # or else pygame will say "Hello from pygame"
@@ -24,7 +23,7 @@ DEV = True
 
 SAVE_FILE = "game_save_data.json"
 
-pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 
 class Font:

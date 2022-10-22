@@ -3,6 +3,7 @@ import logging
 import os
 
 import pygame
+import config
 
 
 def load_module(filepath):

@@ -161,7 +161,7 @@ class ResourceManager:
                 l = loader_func(os.path.join(folder, match.group(0)))
                 if l is None:
                     logging.debug(
-                        f"Resource {matches[0]} was found but {type(self).__name__} refused to load. Ignoring"
+                        f"Resource {match.group(0)} was found but {type(self).__name__} refused to load. Ignoring"
                     )
                     continue
                 self.__setattr__(key, l)
@@ -194,6 +194,12 @@ class PygameSoundManager(ResourceManager):
         super().__init__(folder, loader_func=util.debug_arguments(pygame.mixer.Sound))
 
 
+def tmx_loader(file):
+    if not file.endswith(".tmx"):
+        return None
+    return pytmx.load_pygame(file)
+
+
 class TMXManager(ResourceManager):
     def __init__(self, folder=None):
-        super().__init__(folder, loader_func=util.debug_arguments(pytmx.load_pygame))
+        super().__init__(folder, loader_func=util.debug_arguments(tmx_loader))

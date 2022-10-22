@@ -1,10 +1,10 @@
 # Trigger loggers
 import config
-import game
+import run_game
 
 if __name__ == "__main__":
     print("starting Ocean Night v1.0")
 
-    game.run()
+    run_game.main(config)
 
     print("exiting")

@@ -1,6 +1,3 @@
-# TODO: import game engine and start running
-import lib
-
-
-def run():
-    print("running")
+from .world import World
+from .engine import Engine
+from .render import Renderer

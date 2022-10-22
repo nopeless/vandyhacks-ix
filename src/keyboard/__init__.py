@@ -28,6 +28,15 @@ def pygame_keys_x_axis(keys):
     return x
 
 
+def pygame_keys_y_axis(keys):
+    y = 0
+    if keys[pygame.K_s]:
+        y -= 1
+    if keys[pygame.K_w]:
+        y += 1
+    return y
+
+
 def pygame_event_to_direction_index(e):
     """
     0: none

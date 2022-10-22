@@ -8,13 +8,13 @@ import os
 
 import keyboard
 
+import resources
 
 SCREEN_WIDTH = 1080
 SCREEN_HEIGHT = 720
 
 pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-import managers
 
 running = True
 
@@ -57,9 +57,13 @@ class Player(pygame.sprite.Sprite):
 # for x in range(10):
 #     for y in range(10):
 #         if x == 10 - y:
-tiles.add(Tile(0, 0, managers.images.diag))
+tiles.add(
+    pygame.sprite.Group(Tile(0, 0, resources.images.diag)),
+)
 
-player = Player(managers.images.playerimg)
+print(tiles.sprites)
+
+player = Player(resources.images.playerimg)
 
 
 def is_player_colliding(player, tiles):
@@ -148,10 +152,10 @@ while running:
             # print(v, velocity_vector, velocity_vector.angle_to(v))
 
             if abs(velocity_vector.angle_to(v)) < 90:
-                velocity_vector = v * velocity_vector.dot(
-                    v.rotate(90 if dx < 0 else -90)
-                )
-                # print("new velocity", velocity_vector)
+                print("angle", v)
+                print("before velocity", velocity_vector)
+                velocity_vector = v.rotate(90) * velocity_vector.dot(v.rotate(90))
+                print("new velocity", velocity_vector)
 
                 player.vx = velocity_vector.x
                 player.vy = velocity_vector.y

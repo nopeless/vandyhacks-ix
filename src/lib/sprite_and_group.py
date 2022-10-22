@@ -9,8 +9,11 @@ class Sprite(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        self._image = pygame.image.load("../_internal_resources/fallback.png")
+        self.image = pygame.image.load("../_internal_resources/fallback.png")
         self._rendering_mode = "PYSURFACE"
+
+        # Might not dynamically change in the layered update group
+        self.layer = 0
 
         self.velocity = pygame.Vector2(0, 0)
 
@@ -23,10 +26,14 @@ class Sprite(pygame.sprite.Sprite):
 
         raise Exception("This should not happen")
 
-    @property.setter
+    @image.setter
     def image(self, v):
         self._rendering_mode = "IGIF" if isinstance(v, IGif) else "PYSURFACE"
         self._image = v
+
+        # This is a waste of memory, but it won't hinder performance
+        self.mask = pygame.mask.from_surface(self.image)
+
         self.rect = v.get_rect()
 
     def update(self):
@@ -52,11 +59,11 @@ class Sprite(pygame.sprite.Sprite):
     def y(self):
         return self.rect.y
 
-    @property.setter
+    @x.setter
     def x(self, v):
         self.rect.x = v
 
-    @property.setter
+    @y.setter
     def y(self, v):
         self.rect.y = v
 
@@ -67,7 +74,7 @@ class Sprite(pygame.sprite.Sprite):
         """
         return pygame.Vector2(self.x, self.y)
 
-    @property.setter
+    @pos.setter
     def pos(self, v):
         """
         sets x and y
@@ -79,7 +86,7 @@ class Sprite(pygame.sprite.Sprite):
     def vx(self):
         return self.velocity.x
 
-    @property.setter
+    @vx.setter
     def vx(self, v):
         self.velocity.x = v
 
@@ -87,12 +94,42 @@ class Sprite(pygame.sprite.Sprite):
     def vy(self):
         return self.velocity.y
 
-    @property.setter
+    @vy.setter
     def vy(self, v):
         self.velocity.y = v
+
+
+class Group(pygame.sprite.LayeredUpdates):
+    def __init__(self, *sprites):
+        super().__init__(*sprites)
 
 
 class Player(Sprite):
     def __init__(self, image):
         super().__init__()
         self.image = image
+
+
+class Particle(Sprite):
+    """
+    A self removing sprite
+    """
+
+    def __init__(self, image, callback=None):
+        super().__init__()
+        self.image = image
+        self.callback = (
+            callback if callback else lambda s, t: None if t < 60 else self.kill()
+        )
+
+    def update(self):
+        super().update()
+        self.callback()
+
+    def create_at(self, pos):
+        """
+        Creates a new particle at the given position
+        """
+        p = Particle(self.image, self.callback)
+        p.pos = pos
+        return p
