@@ -24,6 +24,38 @@ def splice_image(source_img, width, height, x, y):
     return surf
 
 
+def is_number(n):
+    return isinstance(n, numbers.Number)
+
+
+class Counter:
+    """
+    Supports floats as well
+    """
+
+    def __init__(self, loop):
+        self._counter = 0
+        self.loop = loop
+
+    @property
+    def counter(self):
+        return self._counter
+
+    @counter.setter
+    def counter(self, value):
+        self._counter = value % self.loop
+
+    def __add__(self, other):
+        self.counter += int(other)
+        return self
+
+    def __int__(self):
+        return int(self.counter)
+
+    def __float__(self):
+        return float(self.counter)
+
+
 def debug_arguments(func):
     def wrapper(*args, **kwargs):
         try:

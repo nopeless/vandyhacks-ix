@@ -4,6 +4,7 @@ import logging
 import os
 import re
 
+import pytmx
 import pygame
 
 import util
@@ -157,8 +158,14 @@ class ResourceManager:
                 continue
             elif count == 1:
                 match = matches[0]
+                l = loader_func(os.path.join(folder, match.group(0)))
+                if l is None:
+                    logging.debug(
+                        f"Resource {matches[0]} was found but {type(self).__name__} refused to load. Ignoring"
+                    )
+                    continue
+                self.__setattr__(key, l)
                 logging.debug(f"{type(self).__name__} loaded resources for {key}")
-                self.__setattr__(key, loader_func(os.path.join(folder, match.group(0))))
             else:
                 l = [
                     self.__invalid_index_exception
@@ -185,3 +192,8 @@ class ImageManager(ResourceManager):
 class PygameSoundManager(ResourceManager):
     def __init__(self, folder=None):
         super().__init__(folder, loader_func=util.debug_arguments(pygame.mixer.Sound))
+
+
+class TMXManager(ResourceManager):
+    def __init__(self, folder=None):
+        super().__init__(folder, loader_func=util.debug_arguments(pytmx.load_pygame))
