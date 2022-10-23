@@ -282,11 +282,10 @@ class Engine:
                 continue
 
             diff = sprite.pos - player.pos
-            if diff.length() < 100:
-                # print("in range")
+            if diff.length() < 50:
                 if (
                     abs(diff.angle_to(self.world.get_mouse_pos() - player.rect.center))
-                    < 180 * DEG_TO_RAD
+                    < 30
                 ):
                     sprite.velocity += (
                         diff.normalize() * -0.1 * 300 / (diff.length() + 150)
