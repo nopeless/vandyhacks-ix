@@ -14,7 +14,7 @@ class Camera:
         self.world = world
 
         # Local zoom * Global render scale
-        self._zoom = 1.0 * 8
+        self._zoom = 1.0 * 6
 
         # Use quadratic speed (hard coded)
         self.camera_stiffness = 0.1

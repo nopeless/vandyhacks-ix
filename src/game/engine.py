@@ -19,7 +19,7 @@ def is_entity_colliding(entity, objects):
 
 
 # This depends on the nature of the map
-EXPLORE_DERIVATIVE_THRESHOLD = 10
+EXPLORE_DERIVATIVE_THRESHOLD = 5
 
 
 def process_collision(movable_entity, static_entities):
@@ -81,7 +81,7 @@ def process_collision(movable_entity, static_entities):
             movable_entity.velocity.y = 0
             return
         if dy == 0:
-            movable_entity.pos.y = oy + dy
+            movable_entity.pos.x = ox + dx
             movable_entity.velocity.x = 0
             return
 
@@ -241,6 +241,7 @@ class Engine:
             )
             * 0.1
         )
+
         self.world.player.velocity += move
 
         for sprite in self.world.sprites():
