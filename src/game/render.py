@@ -27,8 +27,6 @@ import keyboard
 # Setting this value to a 1 will result in a buffer that fits the entire screen
 WORLD_RENDER_SCALE = 6
 
-# def safe_subsurface(img, rect):
-
 
 class Renderer:
     def __init__(self, world):
@@ -47,8 +45,8 @@ class Renderer:
         self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer)
 
         # This is a virtual screen
-        logging.info(f"initialized world canvas {self.world.screen_size}")
-        self.canvas = pygame.Surface(self.world.screen_size, pygame.SRCALPHA, 32)
+        logging.info(f"initialized world canvas {self.world.dimensions}")
+        self.canvas = pygame.Surface(self.world.dimensions, pygame.SRCALPHA, 32)
 
         self.pyscroll_view = pygame.Surface(
             self.world.screen_size / WORLD_RENDER_SCALE, pygame.SRCALPHA, 32
@@ -85,7 +83,12 @@ class Renderer:
                     self.canvas.subsurface(self.world.camera.rect),
                     self.world.screen_size,
                 ),
-                (0, 0),
+                (
+                    WORLD_RENDER_SCALE
+                    * (self.world.camera.rect.left - self.world.camera.pos.x),
+                    WORLD_RENDER_SCALE
+                    * (self.world.camera.rect.top - self.world.camera.pos.y),
+                ),
             )
 
     def event(self, event):

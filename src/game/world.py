@@ -73,16 +73,23 @@ class Camera:
 
         # TODO: zoom might be broken
         self._pos.x = clamp(
-            self._pos.x, 0, self.world.width - self.world.screen_size[0] / self.zoom
+            0, self._pos.x, self.world.width - self.world.screen_size[0] / self.zoom
         )
         self._pos.y = clamp(
-            self._pos.y, 0, self.world.height - self.world.screen_size[1] / self.zoom
+            0, self._pos.y, self.world.height - self.world.screen_size[1] / self.zoom
+        )
+
+    @property
+    def center(self):
+        return (
+            self.pos.x + self.world.screen_size.x / self.zoom / 2,
+            self.pos.y + self.world.screen_size.y / self.zoom / 2,
         )
 
     def update(self):
         # TODO not tested
         if self.target is not None:
-            d = self.pos - self.target
+            d = pygame.Vector2(self.target) - self.center
             # TODO improve this block
             dd = d / 10
 
@@ -153,6 +160,6 @@ class World(Group):
 
         self.player = resources.sprites.player
 
-        self.player.pos = pygame.Vector2(16, 8)
+        self.player.pos = pygame.Vector2(20, 8)
 
         self.add(self.player)
