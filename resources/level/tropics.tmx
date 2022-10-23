@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="64" height="108" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="1">
- <tileset firstgid="1" source="../../../Desktop/TileProjs/tropics/landset.tsx"/>
- <tileset firstgid="120" source="../../../Desktop/TileProjs/tropics/underset.tsx"/>
- <tileset firstgid="282" source="../../../Desktop/TileProjs/tropics/waterset.tsx"/>
- <tileset firstgid="346" source="../../../Desktop/TileProjs/tropics/longweedset.tsx"/>
+ <tileset firstgid="1" source="landset.tsx"/>
+ <tileset firstgid="120" source="underset.tsx"/>
+ <tileset firstgid="282" source="waterset.tsx"/>
+ <tileset firstgid="346" source="longweedset.tsx"/>
  <tileset firstgid="353" source="skyboxset.tsx"/>
  <tileset firstgid="417" source="gypsyset.tsx"/>
- <tileset firstgid="423" source="../../../Desktop/TileProjs/tropics/gypsy2set.tsx"/>
- <tileset firstgid="429" source="../../../Desktop/TileProjs/tropics/gypsy3set.tsx"/>
+ <tileset firstgid="423" source="gypsy2set.tsx"/>
+ <tileset firstgid="429" source="gypsy3set.tsx"/>
  <layer id="7" name="skybox" width="64" height="108">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
