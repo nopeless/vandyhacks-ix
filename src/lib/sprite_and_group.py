@@ -36,6 +36,8 @@ class Sprite(pygame.sprite.Sprite):
         super().__init__()
         static = True
         gravity = False
+        self.ground_timer = 0
+        self.hit_ceiling = False
         self.use_manual_hitbox = False
 
         self.image = pygame.image.load("src/_internal_resources/fallback.png")
@@ -91,6 +93,7 @@ class Sprite(pygame.sprite.Sprite):
         if self._rendering_mode is "IGIF":
             # Updates the frame index
             self.frame
+        self.ground_timer += 1
         self.pos += self.velocity
 
     @property
@@ -115,6 +118,20 @@ class Player(Sprite):
         self.static = False
         self.gravity = True
         self.image = image
+
+        self.used_double_jump = False
+        self.last_direction = 0
+        self.last_key_hit_timer = 0
+        self.used_dash = False
+        self.dash_cooldown = 0
+
+    def update(self):
+        self.last_key_hit_timer += 1
+        self.dash_cooldown -= 1
+        if self.ground_timer == 0:
+            self.used_dash = False
+            self.used_double_jump = False
+        super().update()
 
 
 class PlayerGun(Sprite):

@@ -1,5 +1,6 @@
 from types import SimpleNamespace
 import time
+import logging
 
 import pygame
 
@@ -62,5 +63,5 @@ def main(config):
         clock.tick(60)
 
         if i % 60 == 0:
-            print(f"fps: {60/(time.time() - timer)}")
+            logging.debug(f"fps: {60/(time.time() - timer)}")
             timer = time.time()
