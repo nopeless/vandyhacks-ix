@@ -13,6 +13,8 @@ level = TMXManager("resources/level")
 images.player.walk = SourceGif(images.player.sheet.walk, 5).instance
 images.player.run = SourceGif(images.player.sheet.run, 5).instance
 images.player.idle = SourceGif(images.player.sheet.idle, 10).instance
+images.player.fall = SourceGif([images.fallback], 10).instance
+images.player.dash = SourceGif([images.fallback], 10).instance
 
 # Load sprites here
 sprites = SimpleNamespace()
