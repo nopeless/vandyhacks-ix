@@ -25,6 +25,7 @@ def is_entity_colliding(entity, objects):
 
 # This depends on the nature of the map
 EXPLORE_DERIVATIVE_THRESHOLD = 5
+DEG_TO_RAD = math.pi / 180
 
 
 def process_collision(movable_entity, static_entities):
@@ -278,6 +279,22 @@ class Engine:
                 sprite.kill()
                 self.world.collectibles.remove(sprite)
                 self.world.score += 100
+                continue
+
+            diff = sprite.pos - player.pos
+            if diff.length() < 100:
+                # print("in range")
+                if (
+                    abs(diff.angle_to(self.world.get_mouse_pos() - player.rect.center))
+                    < 180 * DEG_TO_RAD
+                ):
+                    sprite.velocity += (
+                        diff.normalize() * -0.1 * 300 / (diff.length() + 150)
+                    )
+
+            sprite.velocity *= 0.9
+
+        self.world.collectibles.update()
 
         # print("player where", player.rect)
         self.world.camera.target = player.rect.center
