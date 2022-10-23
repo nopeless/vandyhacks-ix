@@ -145,10 +145,10 @@ class World(Group):
         self.debug = config.debug
 
         self.debug_use_absolute_camera = config.debug
-        if self.debug_use_absolute_camera:
-            logging.info("Using absolute camera for debugging purposes")
-
         self.debug_show_hitbox = config.debug
+
+        logging.info(f"{self.debug_use_absolute_camera=}")
+        logging.info(f"{self.debug_show_hitbox=}")
 
         self.dimensions = pygame.Vector2(self.width, self.height)
 
@@ -163,18 +163,6 @@ class World(Group):
 
         # Special rendering layer tht shouldn't be treated like a sprite group
         self.texts = Group()
-
-        # Debugging
-        if self.debug:
-
-            def fac(x, y, text):
-                t = BaseText(text)
-                t.pos = pygame.Vector2(x, y)
-                return t
-
-            for x in range(0, config.tmx.width, 4):
-                for y in range(0, config.tmx.width, 4):
-                    self.texts.add(fac(x * 8, y * 8, f"{x}x{y}"))
 
         self.camera = Camera(self)
 
