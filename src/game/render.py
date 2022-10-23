@@ -71,14 +71,24 @@ class Renderer:
 
         self.canvas.blit(self.pyscroll_view, self.group.view)
 
-        pygame.draw.rect(self.canvas, (0, 0, 255), self.world.camera.rect, width=2)
+        if self.world.debug:
+            pygame.draw.rect(self.canvas, (0, 0, 255), self.world.camera.rect, width=2)
 
-        screen.blit(
-            # self.pyscroll_view,
-            self.canvas,
-            (0, 0)
-            # pygame.transform.scale(self.pyscroll_view, self.world.screen_size), (0, 0)
-        )
+        if self.world.debug_use_absolute_camera:
+            screen.blit(
+                # self.pyscroll_view,
+                self.canvas,
+                (0, 0)
+                # pygame.transform.scale(self.pyscroll_view, self.world.screen_size), (0, 0)
+            )
+        else:
+            screen.blit(
+                pygame.transform.scale(
+                    self.canvas.subsurface(self.world.camera.rect),
+                    self.world.screen_size,
+                ),
+                (0, 0),
+            )
 
         # if self.world.debug:
         #     if self.world.debug_use_absolute_camera:

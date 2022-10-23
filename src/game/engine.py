@@ -125,14 +125,14 @@ class Engine:
         Process pygame events
         """
         if event.keys[pygame.K_j]:
-            self.world.camera.pos.x -= 12
+            self.world.camera.pos -= (12, 0)
         if event.keys[pygame.K_l]:
-            self.world.camera.pos.x += 12
+            self.world.camera.pos += (12, 0)
 
         if event.keys[pygame.K_i]:
-            self.world.camera.pos.y -= 12
+            self.world.camera.pos += (0, -12)
         if event.keys[pygame.K_k]:
-            self.world.camera.pos.y += 12
+            self.world.camera.pos += (0, 12)
 
     def update(self, keys):
         """

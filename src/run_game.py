@@ -14,7 +14,7 @@ def main(config):
     screen = config.screen
 
     config.screen_size = screen.get_size()
-    config.tmx = resources.level.something_new
+    config.tmx = resources.level.tropics
 
     # Debug things
     config.debug = True
