@@ -92,7 +92,7 @@ class Sprite(pygame.sprite.Sprite):
     def update(self):
         if self._rendering_mode is "IGIF":
             # Updates the frame index
-            self.frame
+            self._image.frame
         self.ground_timer += 1
         self.pos += self.velocity
 

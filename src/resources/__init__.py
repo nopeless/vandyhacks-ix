@@ -18,5 +18,5 @@ images.player.idle = SourceGif(images.player.sheet.idle, 10).instance
 sprites = SimpleNamespace()
 
 
-sprites.player = Player(images.player.hitbox)
+sprites.player = Player(images.player.idle)
 sprites.player.hitbox = images.player.hitbox
