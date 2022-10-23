@@ -281,6 +281,7 @@ class Engine:
                 sprite.kill()
                 self.world.collectibles.remove(sprite)
                 self.world.score += 100
+                sfx.collect.play()
                 continue
 
             if LMB:

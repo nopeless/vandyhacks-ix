@@ -19,9 +19,6 @@ def main(config):
     config.screen_size = screen.get_size()
     config.tmx = resources.level.tropics
 
-    # Debug things
-    config.debug = False
-
     world = World(config)
     engine = Engine(world)
     renderer = Renderer(world)

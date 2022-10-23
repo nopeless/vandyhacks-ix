@@ -23,6 +23,8 @@ SCREEN_HEIGHT = 720
 
 DEV = False
 
+debug = False
+
 SAVE_FILE = "game_save_data.json"
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))

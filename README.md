@@ -4,11 +4,29 @@ This is a project to clean up the ocean.
 
 If you are reading this message, you somehow stumbled upon an incomplete project
 
----
+# How to play
 
-Use this for pyscroll https://github.com/nopeless/pyscroll.git
+install these packages
+```
+pyscroll
+pytmx
+pygame
+```
 
-# Debugging
+run
+```
+python src
+```
+
+Enjoy!
+
+# For Developers
+
+## Enable debug
+
+Go to `src/config/__init__.py` and change `debug` to `True` to enable debug mode
+
+## Shortcuts
 
 Shortcut: One of `. + (debug key)`
 
