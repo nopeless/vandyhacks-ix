@@ -11,6 +11,8 @@ from ui import BaseText
 
 from util import clamp
 
+from .world_load import load
+
 
 class Camera:
     def __init__(self, world):
@@ -171,3 +173,6 @@ class World(Group):
         self.player.pos = pygame.Vector2(20, 8)
 
         self.add(self.player)
+
+        # Must be last call
+        load(self)
