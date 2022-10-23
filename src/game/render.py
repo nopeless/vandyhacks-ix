@@ -9,6 +9,7 @@ import pygame
 import pyscroll
 
 import keyboard
+import resources
 
 from lib import Group
 from util import angle_to, rot_center, flip
@@ -74,15 +75,13 @@ class Renderer:
         self.hud = Group()
 
         self.score_text = BaseText("score:        ", size=64)
-        self.score_text.pos = pygame.Vector2(self.world.screen_size[0] - 300, 0)
+        self.score_text.pos = pygame.Vector2(self.world.screen_size[0] - 340, 0)
 
-        def l(*args, **kwargs):
-            self.score_text.text = "Score: " + to_str(self.world.score)
-
-        # Register updater
-        self.score_text.update = l
+        self.time_text = BaseText("time:        ", size=64)
+        self.time_text.pos = pygame.Vector2(self.world.screen_size[0] - 245, 50)
 
         self.hud.add(self.score_text)
+        self.hud.add(self.time_text)
 
     def render(self, screen):
         """
@@ -94,6 +93,11 @@ class Renderer:
 
         # Update hud elements
         self.hud.update()
+
+        self.score_text.text = "Score: " + to_str(self.world.score).rjust(6, "0")
+        self.time_text.text = "Time: " + to_str(
+            int(200 - self.world.get_ellapsed_time())
+        ).rjust(3, "0")
 
         self.group.center(self.world.camera.rect.center)
 
@@ -114,6 +118,12 @@ class Renderer:
         cleaner = self.world.player.cleaner
         # Special logic handler
         if cleaner:
+            LMB = pygame.mouse.get_pressed()[0]
+            cleaner.image = (
+                resources.images.cleaner.idle
+                if not LMB
+                else resources.images.cleaner.sucking
+            )
             cleaner.update()
             if (
                 90 * DEG_TO_RAD < cleaner.rotation

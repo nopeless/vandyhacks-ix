@@ -1,4 +1,5 @@
 import logging
+import time
 
 import pygame
 
@@ -162,6 +163,8 @@ class World(Group):
 
         self.score = 0
 
+        self.start_time = time.time()
+
         # This will be dealt by the render function
         self.particles = Group()
 
@@ -181,6 +184,9 @@ class World(Group):
 
         # Must be last call
         load(self)
+
+    def get_ellapsed_time(self):
+        return time.time() - self.start_time
 
     def get_mouse_pos(self):
         """

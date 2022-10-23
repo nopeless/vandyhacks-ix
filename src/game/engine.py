@@ -273,6 +273,8 @@ class Engine:
             if not sprite.static:
                 process_collision(sprite, self.world.collision_sprites)
 
+        LMB = pygame.mouse.get_pressed()[0]
+
         # Process collectibles
         for sprite in self.world.collectibles:
             if sprite.rect.colliderect(player.rect):
@@ -281,17 +283,22 @@ class Engine:
                 self.world.score += 100
                 continue
 
-            diff = sprite.pos - player.pos
-            if diff.length() < 50:
-                if (
-                    abs(diff.angle_to(self.world.get_mouse_pos() - player.rect.center))
-                    < 30
-                ):
-                    sprite.velocity += (
-                        diff.normalize() * -0.1 * 300 / (diff.length() + 150)
-                    )
+            if LMB:
+                diff = sprite.pos - player.pos
+                if diff.length() < 50:
+                    if (
+                        abs(
+                            diff.angle_to(
+                                self.world.get_mouse_pos() - player.rect.center
+                            )
+                        )
+                        < 30
+                    ):
+                        sprite.velocity += (
+                            diff.normalize() * -0.1 * 300 / (diff.length() + 150)
+                        )
 
-            sprite.velocity *= 0.9
+                sprite.velocity *= 0.9
 
         self.world.collectibles.update()
 

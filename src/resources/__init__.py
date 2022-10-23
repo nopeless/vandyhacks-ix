@@ -28,7 +28,7 @@ images.trash.sodacan = Image(images.trash.sodacan)
 # Load sprites here
 sprites = SimpleNamespace()
 
-cleaner = PlayerCleaner(images.cleaner.sucking)
+cleaner = PlayerCleaner(images.cleaner.idle)
 
 sprites.player = Player(images.player.idle, cleaner)
 sprites.player.hitbox = images.player.hitbox
