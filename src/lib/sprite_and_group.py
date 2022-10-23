@@ -155,7 +155,7 @@ class Player(Sprite):
 
         vel = self.pos - self.last_pos
 
-        if vel.y > 1.5:
+        if vel.y > 2:
             # Falling
             self.image = resources.images.player.fall
         else:

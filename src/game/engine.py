@@ -49,7 +49,7 @@ def process_collision(movable_entity, static_entities):
                         (-trydx, -trydy),
                         (-trydx, trydy),
                     ):
-                        movable_entity.pos = (ox + usex, oy + usey)
+                        movable_entity.pos = pygame.Vector2(ox + usex, oy + usey)
                         if not is_entity_colliding(movable_entity, static_entities):
                             dx = usex
                             dy = usey
