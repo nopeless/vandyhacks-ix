@@ -1,4 +1,5 @@
 import functools
+import logging
 
 import pygame
 
@@ -162,6 +163,37 @@ class Player(Sprite):
     def on_head(self):
         sfx.head.play()
 
+    def event(self, event):
+        # Jump
+        if keyboard.keydown(event, pygame.K_w):
+            if self.ground_timer < 12:
+                logging.info("player jumped")
+                sfx.jump.play()
+                self.velocity -= (0, 4)
+            elif not self.used_double_jump and self.ground_timer < 60:
+                logging.info("player used second jump")
+                sfx.jump.play()
+                self.velocity.y = -5.5
+                self.used_double_jump = True
+
+        # Dash
+        for x, key in (
+            (1, pygame.K_d),
+            (-1, pygame.K_a),
+        ):
+            if self.dash_cooldown < 0:
+                if (
+                    not self.used_dash
+                    and x == self.last_direction
+                    and self.last_key_hit_timer < 8
+                    and keyboard.keydown(event, key)
+                ):
+                    logging.debug("player dashed")
+                    sfx.dash.play()
+                    self.used_dash = True
+                    self.velocity = pygame.Vector2(4 * x, 0)
+                    self.dash_cooldown = 60
+
     def update(self, keys):
         # Jump enhance
         if keys[pygame.K_w]:
@@ -191,6 +223,9 @@ class Player(Sprite):
             )
             * 0.2
         )
+
+        if self.ground_timer < 1:
+            self.used_dash = False
 
         if xs != 0:
             self.last_key_hit_timer = 0

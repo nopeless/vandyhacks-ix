@@ -235,36 +235,7 @@ class Engine:
         """
         Process pygame events
         """
-        player = self.world.player
-        # Jump
-        if keyboard.keydown(event, pygame.K_w):
-            if player.ground_timer < 12:
-                logging.info("player has jumped")
-                sfx.jump.play()
-                player.velocity -= (0, 4)
-            elif not player.used_double_jump and player.ground_timer < 60:
-                logging.info("player has used second jump")
-                sfx.jump.play()
-                player.velocity.y = -5.5
-                player.used_double_jump = True
-
-        # Dash
-        for x, key in (
-            (1, pygame.K_d),
-            (-1, pygame.K_a),
-        ):
-            if player.dash_cooldown < 0:
-                if (
-                    not player.used_dash
-                    and x == player.last_direction
-                    and player.last_key_hit_timer < 8
-                    and keyboard.keydown(event, key)
-                ):
-                    logging.debug("player has dashed")
-                    sfx.dash.play()
-                    player.used_dash = True
-                    player.velocity += (3 * x, 0)
-                    player.dash_cooldown = 120
+        self.world.player.event(event)
 
     def update(self, keys):
         """
