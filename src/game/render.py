@@ -16,10 +16,10 @@ import keyboard
 #     return pygame.Rect(center, (width, height)).move(-width / 2, -height / 2)
 
 
-# def rect_absolute_scale(rect, factor):
-#     return pygame.Rect(
-#         rect.left * factor, rect.top * factor, rect.width * factor, rect.height * factor
-#     )
+def rect_absolute_scale(rect, factor):
+    return pygame.Rect(
+        rect.left * factor, rect.top * factor, rect.width * factor, rect.height * factor
+    )
 
 
 # This value refers to the relative scale of the buffer to the screen resolution
@@ -52,15 +52,20 @@ class Renderer:
             self.world.screen_size / WORLD_RENDER_SCALE, pygame.SRCALPHA, 32
         )
 
+        self.text_canvas = pygame.Surface(self.world.screen_size, pygame.SRCALPHA, 32)
+
         logging.info(
             f"if using absolute camera, the render port {self.world.screen_size / WORLD_RENDER_SCALE} will be scaled to world canvas size"
         )
+
+        import ui
 
     def render(self, screen):
         """
         Renders the world on the screen
         """
         self.canvas.fill((0, 0, 0, 0))
+        self.text_canvas.fill((0, 0, 0, 0))
         self.pyscroll_view.fill((0, 0, 0, 0))
 
         self.group.center(self.world.camera.rect.center)
@@ -75,14 +80,42 @@ class Renderer:
         self.world.draw(self.canvas)
         self.world.particles.draw(self.canvas)
 
+        # self.text.text += "|"
+
         if self.world.debug_use_absolute_camera:
             screen.blit(self.canvas, (0, 0))
         else:
+            pre = pygame.transform.scale(
+                self.canvas.subsurface(self.world.camera.rect),
+                self.world.screen_size,
+            )
+
+            for text in self.world.texts:
+                # Blit high quality things here
+                text.blit_to(
+                    self.text_canvas,
+                    (text.pos - self.group.view.topleft) * WORLD_RENDER_SCALE,
+                )
+
+            text_overlay = pygame.transform.scale(
+                self.text_canvas,
+                self.world.screen_size * self.world.camera.zoom / WORLD_RENDER_SCALE,
+            )
+
+            # Render high quality text
+            pre.blit(
+                text_overlay,
+                # (0, 0)
+                (
+                    pygame.Vector2(self.group.view.topleft)
+                    - self.world.camera.rect.topleft
+                )
+                * WORLD_RENDER_SCALE
+                * 2,
+            )
+
             screen.blit(
-                pygame.transform.scale(
-                    self.canvas.subsurface(self.world.camera.rect),
-                    self.world.screen_size,
-                ),
+                pre,
                 (
                     WORLD_RENDER_SCALE
                     * (self.world.camera.rect.left - self.world.camera.pos.x),

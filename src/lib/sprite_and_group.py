@@ -44,9 +44,21 @@ class Sprite(pygame.sprite.Sprite):
         # Might not dynamically change in the layered update group
         self.layer = 0
 
+        self._id = None
+
         self.pos = pygame.Vector2(0, 0)
 
         self.velocity = pygame.Vector2(0, 0)
+
+    @property
+    def id(self):
+        if not self._id:
+            raise Exception("Sprite has no id")
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._id = value
 
     @property
     def hitbox(self):
@@ -134,3 +146,17 @@ class Particle(Sprite):
         p = Particle(self.image, self.callback)
         p.pos = pos
         return p
+
+
+class Trash(Sprite):
+    """
+    Freeflowing, moving trash
+    """
+
+
+class NPC(Sprite):
+    """
+    A non-player character
+
+    Shows a text bubble when the player is close
+    """

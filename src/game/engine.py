@@ -218,8 +218,12 @@ class Engine:
         """
         Process pygame events
         """
+        # Jump
         if keyboard.keydown(event, pygame.K_w):
             self.world.player.velocity -= (0, 5)
+        # Dash
+        if keyboard.keydown(event, pygame.K_LSHIFT):
+            self.world.player.velocity -= (3, 0)
 
     def update(self, keys):
         """

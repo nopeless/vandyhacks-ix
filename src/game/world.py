@@ -4,7 +4,10 @@ import pygame
 
 import resources
 
+import config
+
 from lib import Group, Tile, Player, Particle
+from ui import BaseText
 
 from util import clamp
 
@@ -14,7 +17,7 @@ class Camera:
         self.world = world
 
         # Local zoom * Global render scale
-        self._zoom = 1.0 * 6
+        self._zoom = 1 * 6
 
         # Use quadratic speed (hard coded)
         self.camera_stiffness = 0.1
@@ -155,6 +158,21 @@ class World(Group):
 
         # This will be dealt by the render function
         self.particles = Group()
+
+        # Special rendering layer tht shouldn't be treated like a sprite group
+        self.texts = Group()
+
+        # Debugging
+        if self.debug:
+
+            def fac(x, y, text):
+                t = BaseText(text)
+                t.pos = pygame.Vector2(x, y)
+                return t
+
+            for x in range(0, config.tmx.width, 4):
+                for y in range(0, config.tmx.width, 4):
+                    self.texts.add(fac(x * 8, y * 8, f"{x}x{y}"))
 
         self.camera = Camera(self)
 

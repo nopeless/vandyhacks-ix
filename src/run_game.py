@@ -28,7 +28,7 @@ def main(config):
     timer = time.time()
 
     # TODO enable this later
-    pygame.mixer.music.load("resources/audio/bgm/underwater1.mp3")
+    pygame.mixer.music.load("resources/audio/bgm/underwater2.mp3")
     pygame.mixer.music.play(-1)
 
     for i in range(3600):

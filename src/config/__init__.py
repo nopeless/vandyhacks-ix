@@ -29,4 +29,5 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 
 class Font:
-    default = pygame.font.Font("resources/fonts/monogram.ttf", 32)
+    default = pygame.freetype.Font("resources/fonts/monogram.ttf", 16)
+    comic = pygame.freetype.SysFont("comicsansms", 16)
