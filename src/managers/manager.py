@@ -11,7 +11,7 @@ import util
 
 
 class ResourceManager:
-    __organization_regex = re.compile(r"^(.+?)(?:_(\d+))?\.(\w+)$")
+    __organization_regex = re.compile(r"^(.+?)(?:_(\d+))?(?:\.|/)?(\w+)$")
     __invalid_index_exception = Exception("Invalid image index")
 
     def __init__(self, folder=None, loader_func=None):
