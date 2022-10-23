@@ -3,10 +3,17 @@ import functools
 import pygame
 from .image_helpers import IGif
 
+import resources
+
 
 @functools.cache
 def image_to_mask(image):
     return pygame.mask.from_surface(image)
+
+
+@functools.cache
+def flip(image):
+    return pygame.transform.flip(image, True, False)
 
 
 class Tile(pygame.sprite.Sprite):
@@ -39,6 +46,8 @@ class Sprite(pygame.sprite.Sprite):
         self.ground_timer = 0
         self.hit_ceiling = False
         self.use_manual_hitbox = False
+        self.last_direction = 0
+        self.flip_for_direction = False
 
         self.image = pygame.image.load("src/_internal_resources/fallback.png")
         self._rendering_mode = "PYSURFACE"
@@ -49,6 +58,7 @@ class Sprite(pygame.sprite.Sprite):
         self._id = None
 
         self.pos = pygame.Vector2(0, 0)
+        self.last_pos = self.pos.copy()
 
         self.velocity = pygame.Vector2(0, 0)
 
@@ -73,12 +83,18 @@ class Sprite(pygame.sprite.Sprite):
 
     @property
     def image(self):
+        i = None
         if self._rendering_mode is "PYSURFACE":
-            return self._image
+            i = self._image
         elif self._rendering_mode is "IGIF":
-            return self._image.image
+            i = self._image.image
+        else:
+            raise Exception("This should not happen")
 
-        raise Exception("This should not happen")
+        if self.flip_for_direction:
+            if self.last_direction == -1:
+                i = flip(i)
+        return i
 
     @image.setter
     def image(self, v):
@@ -94,6 +110,7 @@ class Sprite(pygame.sprite.Sprite):
             # Updates the frame index
             self._image.frame
         self.ground_timer += 1
+        self.last_pos = self.pos.copy()
         self.pos += self.velocity
 
     @property
@@ -120,6 +137,7 @@ class Player(Sprite):
         self.image = image
 
         self.used_double_jump = False
+        self.flip_for_direction = True
         self.last_direction = 0
         self.last_key_hit_timer = 0
         self.used_dash = False
@@ -132,6 +150,26 @@ class Player(Sprite):
             self.used_dash = False
             self.used_double_jump = False
         super().update()
+
+        vel = self.pos - self.last_pos
+
+        if vel.y > 1.5:
+            # Falling
+            self.image = resources.images.player.fall
+        else:
+            v = abs(vel.x)
+            if v < 0.5:
+                # Idle
+                self.image = resources.images.player.idle
+            elif v < 1:
+                # Walk
+                self.image = resources.images.player.walk
+            elif v < 2:
+                # Run
+                self.image = resources.images.player.run
+            else:
+                # Dashing
+                self.image = resources.images.player.dash
 
 
 class PlayerGun(Sprite):
