@@ -148,6 +148,8 @@ class World(Group):
         if self.debug_use_absolute_camera:
             logging.info("Using absolute camera for debugging purposes")
 
+        self.debug_show_hitbox = config.debug
+
         self.dimensions = pygame.Vector2(self.width, self.height)
 
         if self.tilewidth != self.tileheight:

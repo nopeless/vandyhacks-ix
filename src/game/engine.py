@@ -44,10 +44,10 @@ def process_collision(movable_entity, static_entities):
             for trydx in range(EXPLORE_DERIVATIVE_THRESHOLD):
                 for trydy in range(EXPLORE_DERIVATIVE_THRESHOLD):
                     for usex, usey in (
-                        (trydx, trydy),
-                        (-trydx, trydy),
                         (trydx, -trydy),
+                        (trydx, trydy),
                         (-trydx, -trydy),
+                        (-trydx, trydy),
                     ):
                         movable_entity.pos = (ox + usex, oy + usey)
                         if not is_entity_colliding(movable_entity, static_entities):
@@ -90,6 +90,9 @@ def process_collision(movable_entity, static_entities):
         if dy == 0:
             movable_entity.pos.x = ox + dx
             movable_entity.velocity.x = 0
+            # Special
+            if movable_entity.velocity.y > 0.4:
+                movable_entity.velocity.y = 0.4
             return
 
         if v.length() > 1:
@@ -286,7 +289,7 @@ class Engine:
                 xs,
                 0,
             )
-            * 0.1
+            * 0.2
         )
 
         if xs != 0:
@@ -303,7 +306,11 @@ class Engine:
 
             # Process friction
             # TODO improve friction
-            sprite.velocity *= 0.95
+            sprite.velocity.y *= 0.95
+            sprite.velocity.x *= 0.9
+
+            if abs(sprite.velocity.x) < 0.1:
+                sprite.velocity.x = 0
 
         self.world.update()
 

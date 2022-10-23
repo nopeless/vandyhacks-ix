@@ -77,7 +77,13 @@ class Renderer:
         if self.world.debug:
             pygame.draw.rect(self.canvas, (0, 0, 255), self.world.camera.rect, width=2)
 
-        self.world.draw(self.canvas)
+        for sprite in self.world.sprites():
+            if self.world.debug_show_hitbox:
+                if sprite.use_manual_hitbox and sprite._hitbox_image:
+                    self.canvas.blit(sprite._hitbox_image, sprite.rect)
+                    continue
+            self.canvas.blit(sprite.image, sprite.rect)
+
         self.world.particles.draw(self.canvas)
 
         # self.text.text += "|"
@@ -132,6 +138,11 @@ class Renderer:
                 )
                 logging.debug(
                     f"Toggling absolute camera to {self.world.debug_use_absolute_camera }"
+                )
+            if keyboard.debug_key(event.keys, event, pygame.K_b):
+                self.world.debug_show_hitbox = not self.world.debug_show_hitbox
+                logging.debug(
+                    f"Toggling show hitbox to {self.world.debug_show_hitbox }"
                 )
 
     def update(self, keys):

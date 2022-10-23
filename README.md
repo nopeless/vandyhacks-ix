@@ -7,3 +7,4 @@ Shortcut: One of `. + (debug key)`
 | Hotkey | Description                                  |
 |--------|----------------------------------------------|
 | `O`    | Toggle absolute camera mode (see everything) |
+| `B`    | Toggle hitboxes                              |

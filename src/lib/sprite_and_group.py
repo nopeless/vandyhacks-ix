@@ -46,6 +46,7 @@ class Sprite(pygame.sprite.Sprite):
         self.ground_timer = 0
         self.hit_ceiling = False
         self.use_manual_hitbox = False
+        self._hitbox_image = None
         self.last_direction = 0
         self.flip_for_direction = False
 
@@ -78,6 +79,7 @@ class Sprite(pygame.sprite.Sprite):
 
     @hitbox.setter
     def hitbox(self, v):
+        self._hitbox_image = v
         self.use_manual_hitbox = True
         self.mask = image_to_mask(v)
 
