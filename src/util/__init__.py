@@ -7,6 +7,21 @@ import pygame
 import config
 
 
+def get_angle_to_mouse(pos):
+    x, y = pygame.mouse.get_pos()
+    x -= pos.x + 32
+    y -= pos.y + 32
+    return (180 / 3.14) * -math.atan2(y, x)
+
+
+def rot_center(image, angle, x, y):
+
+    rotated_image = pygame.transform.rotate(image, angle)
+    new_rect = rotated_image.get_rect(center=image.get_rect(center=(x, y)).center)
+
+    return rotated_image, new_rect
+
+
 def clamp(s, n, l):
     if n < s:
         return s
