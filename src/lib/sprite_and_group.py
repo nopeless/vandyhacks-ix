@@ -41,8 +41,8 @@ class Sprite(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        static = True
-        gravity = False
+        self.static = True
+        self.gravity = False
         self.ground_timer = 0
         self.hit_ceiling = False
         self.use_manual_hitbox = False
