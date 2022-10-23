@@ -45,6 +45,8 @@ class ResourceManager:
             or logging.warning(f"{folder} -> {name} is invalid. Ignoring...")
         ]
 
+        file_groups.sort(key=lambda m: m.group(1))
+
         for key, group in itertools.groupby(file_groups, lambda x: x.group(1)):
             if getattr(self, key, None):
                 raise Exception(
