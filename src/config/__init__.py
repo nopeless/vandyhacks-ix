@@ -12,6 +12,8 @@ from pygame import freetype
 from . import set_logger
 
 # Pygame initializations
+#
+pygame.mixer.pre_init(44100, -16, 2, 2048)  # setup mixer to avoid sound lag
 pygame.mixer.init()
 pygame.freetype.init()
 pygame.init()
