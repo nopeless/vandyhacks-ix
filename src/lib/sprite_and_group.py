@@ -1,9 +1,12 @@
 import functools
 
 import pygame
-from .image_helpers import IGif
 
+import keyboard
 import resources
+
+sfx = resources.sfx
+from .image_helpers import IGif
 
 
 @functools.cache
@@ -62,6 +65,12 @@ class Sprite(pygame.sprite.Sprite):
         self.last_pos = self.pos.copy()
 
         self.velocity = pygame.Vector2(0, 0)
+
+    def on_land(self):
+        pass
+
+    def on_head(self):
+        pass
 
     @property
     def id(self):
@@ -145,12 +154,52 @@ class Player(Sprite):
         self.used_dash = False
         self.dash_cooldown = 0
 
-    def update(self):
+    def on_land(self):
+        sfx.land.play()
+        self.used_dash = False
+        self.used_double_jump = False
+
+    def on_head(self):
+        sfx.head.play()
+
+    def update(self, keys):
+        # Jump enhance
+        if keys[pygame.K_w]:
+            if self.ground_timer < 30:
+                if not self.hit_ceiling:
+                    self.velocity -= (
+                        0,
+                        0.3 * ((30 - self.ground_timer) / 30),
+                    )
+
+        if keys[pygame.K_j]:
+            self.world.camera.pos -= (1, 0)
+        if keys[pygame.K_l]:
+            self.world.camera.pos += (1, 0)
+
+        if keys[pygame.K_i]:
+            self.world.camera.pos += (0, -1)
+        if keys[pygame.K_k]:
+            self.world.camera.pos += (0, 1)
+
+        xs = keyboard.pygame_keys_x_axis(keys)
+
+        move = (
+            pygame.Vector2(
+                xs,
+                0,
+            )
+            * 0.2
+        )
+
+        if xs != 0:
+            self.last_key_hit_timer = 0
+            self.last_direction = xs
+
+        self.velocity += move
+
         self.last_key_hit_timer += 1
         self.dash_cooldown -= 1
-        if self.ground_timer == 0:
-            self.used_dash = False
-            self.used_double_jump = False
         super().update()
 
         vel = self.pos - self.last_pos

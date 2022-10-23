@@ -191,9 +191,14 @@ class ImageManager(ResourceManager):
         super().__init__(folder, loader_func=util.debug_arguments(pygame.image.load))
 
 
+def sound_loader(file):
+    p = pygame.mixer.Sound(file)
+    return p
+
+
 class PygameSoundManager(ResourceManager):
     def __init__(self, folder=None):
-        super().__init__(folder, loader_func=util.debug_arguments(pygame.mixer.Sound))
+        super().__init__(folder, loader_func=util.debug_arguments(sound_loader))
 
 
 def tmx_loader(file):

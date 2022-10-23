@@ -4,6 +4,9 @@ import logging
 import pygame
 
 import keyboard
+import resources
+
+sfx = resources.sfx
 
 """
 Accepts a world and modifies it
@@ -80,10 +83,14 @@ def process_collision(movable_entity, static_entities):
 
         if dx == 0:
             if dy < 0:
+                if movable_entity.ground_timer > 10:
+                    movable_entity.on_land()
                 movable_entity.ground_timer = 0
                 movable_entity.hit_ceiling = False
             else:
                 movable_entity.hit_ceiling = True
+                movable_entity.on_head()
+
             movable_entity.pos.y = oy + dy
             movable_entity.velocity.y = 0
             return
@@ -233,10 +240,11 @@ class Engine:
         if keyboard.keydown(event, pygame.K_w):
             if player.ground_timer < 12:
                 logging.info("player has jumped")
+                sfx.jump.play()
                 player.velocity -= (0, 4)
             elif not player.used_double_jump and player.ground_timer < 60:
                 logging.info("player has used second jump")
-
+                sfx.jump.play()
                 player.velocity.y = -5.5
                 player.used_double_jump = True
 
@@ -249,10 +257,11 @@ class Engine:
                 if (
                     not player.used_dash
                     and x == player.last_direction
-                    and player.last_key_hit_timer < 10
+                    and player.last_key_hit_timer < 8
                     and keyboard.keydown(event, key)
                 ):
                     logging.debug("player has dashed")
+                    sfx.dash.play()
                     player.used_dash = True
                     player.velocity += (3 * x, 0)
                     player.dash_cooldown = 120
@@ -261,42 +270,6 @@ class Engine:
         """
         Updates itself based on 60hz
         """
-        player = self.world.player
-
-        # Jump enhance
-        if keys[pygame.K_w]:
-            if player.ground_timer < 30:
-                if not player.hit_ceiling:
-                    player.velocity -= (
-                        0,
-                        0.3 * ((30 - player.ground_timer) / 30),
-                    )
-
-        if keys[pygame.K_j]:
-            self.world.camera.pos -= (1, 0)
-        if keys[pygame.K_l]:
-            self.world.camera.pos += (1, 0)
-
-        if keys[pygame.K_i]:
-            self.world.camera.pos += (0, -1)
-        if keys[pygame.K_k]:
-            self.world.camera.pos += (0, 1)
-
-        xs = keyboard.pygame_keys_x_axis(keys)
-
-        move = (
-            pygame.Vector2(
-                xs,
-                0,
-            )
-            * 0.2
-        )
-
-        if xs != 0:
-            player.last_key_hit_timer = 0
-            player.last_direction = xs
-
-        player.velocity += move
 
         for sprite in self.world.sprites():
             # Add gravity
@@ -311,7 +284,9 @@ class Engine:
             if abs(sprite.velocity.x) < 0.1:
                 sprite.velocity.x = 0
 
-        self.world.update()
+        self.world.update(keys=keys)
+
+        player = self.world.player
 
         if not is_entity_colliding(player, self.world.collision_sprites):
             # attemp to snap to ground

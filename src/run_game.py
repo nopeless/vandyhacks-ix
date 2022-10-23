@@ -4,11 +4,11 @@ import logging
 
 import pygame
 
-from game import World, Engine, Renderer
-from util import Counter
-
 import resources
 import keyboard
+
+from game import World, Engine, Renderer
+from util import Counter
 
 
 def main(config):
