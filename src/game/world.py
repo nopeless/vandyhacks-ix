@@ -170,9 +170,18 @@ class World(Group):
 
         self.player = resources.sprites.player
 
+        self.player.world = self
         self.player.pos = pygame.Vector2(20, 8)
 
         self.add(self.player)
 
         # Must be last call
         load(self)
+
+    def get_mouse_pos(self):
+        """
+        Get the mouse position in world coordinates
+        """
+        return (
+            pygame.Vector2(pygame.mouse.get_pos()) / self.camera.zoom + self.camera.pos
+        )

@@ -1,4 +1,6 @@
 import numbers
+import math
+import functools
 import importlib.util as iu
 import logging
 import os
@@ -7,17 +9,28 @@ import pygame
 import config
 
 
-def get_angle_to_mouse(pos):
-    x, y = pygame.mouse.get_pos()
-    x -= pos.x + 32
-    y -= pos.y + 32
-    return (180 / 3.14) * -math.atan2(y, x)
+def angle_to(pos1, pos2):
+    p = pos2 - pos1
+    return math.atan2(p.y, p.x)
 
 
-def rot_center(image, angle, x, y):
+def rot_center(image, angle, center):
+    """
+    Uses 1/64 increments to cache
+    """
+    return _rot_center(image, 32 / math.pi * angle // (math.pi / 32), center)
+
+
+@functools.cache
+def flip(image):
+    return pygame.transform.flip(image, True, False)
+
+
+@functools.cache
+def _rot_center(image, angle, center):
 
     rotated_image = pygame.transform.rotate(image, angle)
-    new_rect = rotated_image.get_rect(center=image.get_rect(center=(x, y)).center)
+    new_rect = rotated_image.get_rect(center=image.get_rect(center=center).center)
 
     return rotated_image, new_rect
 

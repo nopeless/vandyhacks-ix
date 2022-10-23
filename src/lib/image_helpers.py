@@ -1,3 +1,5 @@
+import pygame
+
 from util import Counter, is_number
 
 

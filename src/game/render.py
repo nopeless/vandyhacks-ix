@@ -2,11 +2,16 @@
 Accepts a world and blits on a screen
 """
 import logging
+import math
 
 import pygame
 import pyscroll
 
 import keyboard
+
+from util import angle_to, rot_center, flip
+
+DEG_TO_RAD = math.pi / 180
 
 
 # def scale_rect(rect, factor):
@@ -58,8 +63,6 @@ class Renderer:
             f"if using absolute camera, the render port {self.world.screen_size / WORLD_RENDER_SCALE} will be scaled to world canvas size"
         )
 
-        import ui
-
     def render(self, screen):
         """
         Renders the world on the screen
@@ -83,6 +86,23 @@ class Renderer:
                     self.canvas.blit(sprite._hitbox_image, sprite.rect)
                     continue
             self.canvas.blit(sprite.image, sprite.rect)
+
+        cleaner = self.world.player.cleaner
+        # Special logic handler
+        if cleaner:
+            cleaner.update()
+            if (
+                90 * DEG_TO_RAD < cleaner.rotation
+                or -90 * DEG_TO_RAD > cleaner.rotation
+            ):
+                image, rect = rot_center(
+                    cleaner.image, 90 * DEG_TO_RAD + cleaner.rotation / 2, (12, 12)
+                )
+                image = flip(image)
+                self.canvas.blit(image, cleaner.pos + rect.topleft + (-14, 6))
+            else:
+                image, rect = rot_center(cleaner.image, -cleaner.rotation / 2, (12, 12))
+                self.canvas.blit(image, cleaner.pos + rect.topleft + (14, 6))
 
         self.world.particles.draw(self.canvas)
 

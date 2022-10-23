@@ -1,5 +1,6 @@
 import functools
 import logging
+import math
 
 import pygame
 
@@ -8,6 +9,7 @@ import resources
 
 sfx = resources.sfx
 from .image_helpers import IGif
+from util import angle_to, rot_center, flip
 
 
 @functools.cache
@@ -15,9 +17,7 @@ def image_to_mask(image):
     return pygame.mask.from_surface(image)
 
 
-@functools.cache
-def flip(image):
-    return pygame.transform.flip(image, True, False)
+DEG_TO_RAD = math.pi / 180
 
 
 class Tile(pygame.sprite.Sprite):
@@ -45,16 +45,22 @@ class Sprite(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
+        self.world = None
+
         self.static = True
         self.gravity = False
+
         self.ground_timer = 0
         self.hit_ceiling = False
+
         self.use_manual_hitbox = False
         self._hitbox_image = None
+
         self.last_direction = 0
         self.flip_for_direction = False
 
         self.image = pygame.image.load("src/_internal_resources/fallback.png")
+        self._image_cache = None
         self._rendering_mode = "PYSURFACE"
 
         # Might not dynamically change in the layered update group
@@ -95,13 +101,7 @@ class Sprite(pygame.sprite.Sprite):
 
     @property
     def image(self):
-        i = None
-        if self._rendering_mode is "PYSURFACE":
-            i = self._image
-        elif self._rendering_mode is "IGIF":
-            i = self._image.image
-        else:
-            raise Exception("This should not happen")
+        i = self._image_cache
 
         if self.flip_for_direction:
             if self.last_direction == -1:
@@ -110,24 +110,29 @@ class Sprite(pygame.sprite.Sprite):
 
     @image.setter
     def image(self, v):
-        self._rendering_mode = "IGIF" if isinstance(v, IGif) else "PYSURFACE"
+        if isinstance(v, IGif):
+            self._rendering_mode = "IGIF"
+            self._image_cache = v.image
+        else:
+            self._rendering_mode = "PYSURFACE"
+            self._image_cache = v
         self._image = v
 
         # Respect hitboxes
         if not self.use_manual_hitbox:
             self.mask = image_to_mask(self.image)
 
-    def update(self):
+    def update(self, *args, **kwargs):
         if self._rendering_mode is "IGIF":
             # Updates the frame index
-            self._image.frame
+            self._image_cache = self._image.frame
         self.ground_timer += 1
         self.last_pos = self.pos.copy()
         self.pos += self.velocity
 
     @property
     def rect(self):
-        return self.image.get_rect().move(self.pos)
+        return self._image_cache.get_rect().move(self.pos)
 
     def draw(self, screen):
         """
@@ -142,11 +147,13 @@ class Group(pygame.sprite.LayeredUpdates):
 
 
 class Player(Sprite):
-    def __init__(self, image):
+    def __init__(self, image, cleaner=None):
         super().__init__()
         self.static = False
         self.gravity = True
         self.image = image
+
+        self.cleaner = cleaner
 
         self.used_double_jump = False
         self.flip_for_direction = True
@@ -195,6 +202,14 @@ class Player(Sprite):
                     self.dash_cooldown = 60
 
     def update(self, keys):
+
+        # Cleaner logic
+        if self.cleaner:
+            if self.world:
+                angle = angle_to(self.rect.center, self.world.get_mouse_pos())
+                self.cleaner.pos = pygame.Vector2(self.rect.topleft)
+                self.cleaner.rotation = angle
+
         # Jump enhance
         if keys[pygame.K_w]:
             if self.ground_timer < 30:
@@ -258,10 +273,11 @@ class Player(Sprite):
                 self.image = resources.images.player.dash
 
 
-class PlayerGun(Sprite):
+class PlayerCleaner(Sprite):
     def __init__(self, image):
         super().__init__()
         self.image = image
+        self.rotation = 0
 
 
 class Particle(Sprite):
@@ -293,6 +309,11 @@ class Trash(Sprite):
     """
     Freeflowing, moving trash
     """
+
+    def __init__(self, image):
+        super().__init__()
+        self.image = image
+        self.static = True
 
 
 class NPC(Sprite):
