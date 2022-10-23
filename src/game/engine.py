@@ -272,6 +272,13 @@ class Engine:
             if not sprite.static:
                 process_collision(sprite, self.world.collision_sprites)
 
+        # Process collectibles
+        for sprite in self.world.collectibles:
+            if sprite.rect.colliderect(player.rect):
+                sprite.kill()
+                self.world.collectibles.remove(sprite)
+                self.world.score += 100
+
         # print("player where", player.rect)
         self.world.camera.target = player.rect.center
         self.world.camera.update()

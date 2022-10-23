@@ -57,8 +57,11 @@ def load(world):
             to_be_added.pos = pygame.Vector2(
                 x * 8 + random.randint(-10, 10), y * 8 + random.randint(-10, 10)
             )
-            if random.random() < 0.2 and not is_entity_colliding(
-                to_be_added, world.collision_sprites
-            ):
-                world.add(to_be_added)
-                to_be_added = g()
+            if random.random() < 0.3:
+                if not is_entity_colliding(to_be_added, world.collision_sprites):
+                    while not is_entity_colliding(to_be_added, world.collision_sprites):
+                        if random.random() < 0.2:
+                            break
+                        to_be_added.pos += pygame.Vector2(0, -1)
+                    world.collectibles.add(to_be_added)
+                    to_be_added = g()

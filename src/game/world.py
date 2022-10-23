@@ -160,11 +160,15 @@ class World(Group):
         logging.debug(f"Accepted screen config of {config.screen_size}")
         self.screen_size = pygame.Vector2(config.screen_size)
 
+        self.score = 0
+
         # This will be dealt by the render function
         self.particles = Group()
 
         # Special rendering layer tht shouldn't be treated like a sprite group
         self.texts = Group()
+
+        self.collectibles = Group()
 
         self.camera = Camera(self)
 
