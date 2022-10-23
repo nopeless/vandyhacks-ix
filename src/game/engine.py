@@ -301,7 +301,6 @@ class Engine:
         for sprite in self.world.sprites():
             # Add gravity
             if sprite.gravity:
-                # continue
                 sprite.velocity.y += 0.2
 
             # Process friction
@@ -313,6 +312,14 @@ class Engine:
                 sprite.velocity.x = 0
 
         self.world.update()
+
+        if not is_entity_colliding(player, self.world.collision_sprites):
+            # attemp to snap to ground
+            last_pos = player.pos.copy()
+            player.pos.y += 1
+            if is_entity_colliding(player, self.world.collision_sprites):
+                # Special override
+                player.pos.y = last_pos.y
 
         # Process collisions
         for sprite in self.world.sprites():
