@@ -10,7 +10,8 @@ bgm = PygameSoundManager("resources/audio/bgm")
 
 level = TMXManager("resources/level")
 
-images.player_walking_test = SourceGif(images.player.moves_b.moves, 15).instance
+images.playerc_walking_test = SourceGif(images.player.moves_c.moves, 5).instance
+images.playere_walking_test = SourceGif(images.player.moves_e.moves, 8).instance
 
 # Load sprites here
 sprites = SimpleNamespace()
