@@ -1,6 +1,17 @@
 import pygame
 
 
+def keydown(e, key):
+    """
+    Returns True if the key is key
+    """
+    return e.type == pygame.KEYDOWN and e.key == key
+
+
+def debug_key(keys, e, key):
+    return keys[pygame.K_PERIOD] and e.type == pygame.KEYDOWN and e.key == key
+
+
 def pygame_event_to_dxdy(e):
     """
     Returns None if the key pressed is not relevant

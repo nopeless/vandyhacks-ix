@@ -1,21 +1,61 @@
+import functools
+
 import pygame
 from .image_helpers import IGif
+
+
+@functools.cache
+def image_to_mask(image):
+    return pygame.mask.from_surface(image)
+
+
+class Tile(pygame.sprite.Sprite):
+    """
+    Should not be drawn
+    """
+
+    def __init__(self, col, row, w, h, image):
+        super().__init__()
+        self.col, self.row = col, row
+        self.rect = pygame.Rect(col * w, row * h, w, h)
+        self._image = image
+        self.mask = image_to_mask(image)
 
 
 class Sprite(pygame.sprite.Sprite):
     """
     A better sprite class that acts as the base sprite class
+
+    Defaults
+
+      static - the sprite is static and will not collide with the collision layer
+      gravity - the sprite will not be affected by gravity
     """
 
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("../_internal_resources/fallback.png")
+        static = True
+        gravity = False
+        self.use_manual_hitbox = False
+
+        self.image = pygame.image.load("src/_internal_resources/fallback.png")
         self._rendering_mode = "PYSURFACE"
 
         # Might not dynamically change in the layered update group
         self.layer = 0
 
+        self.pos = pygame.Vector2(0, 0)
+
         self.velocity = pygame.Vector2(0, 0)
+
+    @property
+    def hitbox(self):
+        return self.mask
+
+    @hitbox.setter
+    def hitbox(self, v):
+        self.use_manual_hitbox = True
+        self.mask = image_to_mask(v)
 
     @property
     def image(self):
@@ -31,72 +71,25 @@ class Sprite(pygame.sprite.Sprite):
         self._rendering_mode = "IGIF" if isinstance(v, IGif) else "PYSURFACE"
         self._image = v
 
-        # This is a waste of memory, but it won't hinder performance
-        self.mask = pygame.mask.from_surface(self.image)
-
-        self.rect = v.get_rect()
+        # Respect hitboxes
+        if not self.use_manual_hitbox:
+            self.mask = image_to_mask(self.image)
 
     def update(self):
         if self._rendering_mode is "IGIF":
             # Updates the frame index
             self.frame
-
         self.pos += self.velocity
+
+    @property
+    def rect(self):
+        return self.image.get_rect().move(self.pos)
 
     def draw(self, screen):
         """
         Implemented like SpriteGroup.draw
         """
         screen.blit(self.image, self.rect)
-
-    # Getters and setters
-
-    @property
-    def x(self):
-        return self.rect.x
-
-    @property
-    def y(self):
-        return self.rect.y
-
-    @x.setter
-    def x(self, v):
-        self.rect.x = v
-
-    @y.setter
-    def y(self, v):
-        self.rect.y = v
-
-    @property
-    def pos(self):
-        """
-        Composite variable of x and y
-        """
-        return pygame.Vector2(self.x, self.y)
-
-    @pos.setter
-    def pos(self, v):
-        """
-        sets x and y
-        """
-        self.x = v.x
-        self.y = v.y
-
-    @property
-    def vx(self):
-        return self.velocity.x
-
-    @vx.setter
-    def vx(self, v):
-        self.velocity.x = v
-
-    @property
-    def vy(self):
-        return self.velocity.y
-
-    @vy.setter
-    def vy(self, v):
-        self.velocity.y = v
 
 
 class Group(pygame.sprite.LayeredUpdates):
@@ -105,6 +98,14 @@ class Group(pygame.sprite.LayeredUpdates):
 
 
 class Player(Sprite):
+    def __init__(self, image):
+        super().__init__()
+        self.static = False
+        self.gravity = True
+        self.image = image
+
+
+class PlayerGun(Sprite):
     def __init__(self, image):
         super().__init__()
         self.image = image

@@ -14,7 +14,10 @@ def main(config):
     screen = config.screen
 
     config.screen_size = screen.get_size()
-    config.tmx = resources.level.main
+    config.tmx = resources.level.something_new
+
+    # Debug things
+    config.debug = True
 
     world = World(config)
     engine = Engine(world)
@@ -29,27 +32,18 @@ def main(config):
         keys = pygame.key.get_pressed()
 
         for event in pygame.event.get():
+            event.keys = keys
             if event.type == pygame.QUIT:
                 return
+
+            # For movements
             engine.event(event)
 
-        engine.update()
+            # For mostly debug handling
+            renderer.event(event)
 
-        pos = engine.world.camera.pos
-        engine.world.camera.pos = (
-            pos.x + keyboard.pygame_keys_x_axis(keys),
-            pos.y - keyboard.pygame_keys_y_axis(keys),
-        )
-        if keys[pygame.K_q]:
-            engine.world.camera.zoom *= 1.05
-        if keys[pygame.K_e]:
-            engine.world.camera.zoom /= 1.05
-
-        # if keys[pygame.K_a]:
-        #     engine.world.camera.zoom += 0.1
-        # if keys[pygame.K_d]:
-        #     engine.world.camera.zoom -= 0.1
-
+        engine.update(keys)
+        renderer.update(keys)
         ### Render routine
 
         # Clear screen

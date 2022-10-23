@@ -2,24 +2,31 @@ import logging
 
 import pygame
 
-from lib import Group
+import resources
 
+from lib import Group, Tile, Player, Particle
 
-def clamp(s, n, l):
-    if n < s:
-        return s
-    if n > l:
-        return l
-    return n
+from util import clamp
 
 
 class Camera:
     def __init__(self, world):
         self.world = world
 
-        self._zoom = 16.0
+        # Local zoom * Global render scale
+        self._zoom = 1.0 * 8
 
-        self.pos = pygame.Vector2(0, 0)
+        # Use quadratic speed (hard coded)
+        self.camera_stiffness = 0.1
+
+        # Do not change this value
+        self.camera_speed_factor = self.world.dimensions.length()
+
+        self.pos = pygame.Vector2(128, 128)
+
+        self.target = None
+
+        self.target_zoom = None
 
     # TODO NOT tested
     def translator(self, pos):
@@ -30,7 +37,7 @@ class Camera:
         return self.pos + self.world.screen_size / self.zoom / 2
 
     @property
-    def absolute_rect(self):
+    def rect(self):
         """
         where the view rect lies in the actual map
         """
@@ -47,9 +54,11 @@ class Camera:
 
     @zoom.setter
     def zoom(self, v):
+        c1 = self.absolute_rect.center
         self._zoom = v
         # Trigger clamp update
-        self.pos = self.pos
+        c2 = self.absolute_rect.center
+        self.pos = self.pos + (c1[0] - c2[0], c1[1] - c2[1])
 
     @property
     def pos(self):
@@ -71,10 +80,17 @@ class Camera:
         )
 
     def update(self):
-        pass
-        return
-        # TODO FIX THIS
-        self.pos = self.world.player.pos
+        # TODO not tested
+        if self.target is not None:
+            d = self.pos - self.target
+            # TODO improve this block
+            dd = d / 10
+
+            self.pos = self.pos + dd
+        if self.target_zoom is not None:
+            self.zoom = (
+                self.zoom + (self.target_zoom - self.zoom) * self.camera_stiffness
+            )
 
 
 class World(Group):
@@ -95,6 +111,33 @@ class World(Group):
         self.width = config.tmx.width * self.tilewidth
         self.height = config.tmx.height * self.tileheight
 
+        logging.info(
+            f"accepted tmx of tile {self.tilewidth}x{self.tileheight} total {self.width}x{self.height}"
+        )
+
+        idx, collision_layer = next(
+            ((i, l) for i, l in enumerate(self.tmx.layers) if l.name == "collision"),
+            None,
+        )
+        if collision_layer is None:
+            raise Exception(
+                "Collision layer was not found. Check if 'collision' layer is present"
+            )
+
+        del self.tmx.layers[idx]
+
+        self.collision_sprites = pygame.sprite.Group()
+
+        for col, row, surface in collision_layer.tiles():
+            t = Tile(col, row, self.tilewidth, self.tileheight, surface)
+            self.collision_sprites.add(t)
+
+        self.debug = config.debug
+
+        self.debug_use_absolute_camera = config.debug
+        if self.debug_use_absolute_camera:
+            logging.info("Using absolute camera for debugging purposes")
+
         self.dimensions = pygame.Vector2(self.width, self.height)
 
         if self.tilewidth != self.tileheight:
@@ -103,9 +146,13 @@ class World(Group):
         logging.debug(f"Accepted screen config of {config.screen_size}")
         self.screen_size = pygame.Vector2(config.screen_size)
 
-        self.camera = Camera(self)
-
+        # This will be dealt by the render function
         self.particles = Group()
 
-        # Register the particle system
-        self.add(self.particles)
+        self.camera = Camera(self)
+
+        self.player = resources.sprites.player
+
+        self.player.pos = pygame.Vector2(16, 8)
+
+        self.add(self.player)

@@ -6,6 +6,14 @@ import pygame
 import config
 
 
+def clamp(s, n, l):
+    if n < s:
+        return s
+    if n > l:
+        return l
+    return n
+
+
 def load_module(filepath):
     file = os.path.basename(filepath)
     spec = iu.spec_from_file_location(file, filepath)

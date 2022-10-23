@@ -163,6 +163,14 @@ while running:
             player.rect.x += dx / 2
             # print(dx)
             player.rect.y += dy / 2
+        else:
+            # Might be because failed to move
+            if dx == 0 and dy == 0 and is_player_colliding(player, tiles):
+                print(player.vy)
+                player.rect.x -= player.vx
+                player.rect.y -= player.vy
+                player.vx = 0
+                player.vy = 0
 
         # if dx == 0:
         #     v = v.rotate(-90)
