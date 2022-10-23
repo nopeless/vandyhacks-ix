@@ -74,13 +74,11 @@ class Renderer:
         if self.world.debug:
             pygame.draw.rect(self.canvas, (0, 0, 255), self.world.camera.rect, width=2)
 
+        self.world.draw(self.canvas)
+        self.world.particles.draw(self.canvas)
+
         if self.world.debug_use_absolute_camera:
-            screen.blit(
-                # self.pyscroll_view,
-                self.canvas,
-                (0, 0)
-                # pygame.transform.scale(self.pyscroll_view, self.world.screen_size), (0, 0)
-            )
+            screen.blit(self.canvas, (0, 0))
         else:
             screen.blit(
                 pygame.transform.scale(
@@ -89,46 +87,6 @@ class Renderer:
                 ),
                 (0, 0),
             )
-
-        # if self.world.debug:
-        #     if self.world.debug_use_absolute_camera:
-        #         # Draw blue outline for camera
-        #         pygame.draw.rect(self.canvas, (0, 0, 255, 64), self.world.camera.rect)
-
-        # self.group.draw(self.canvas)
-
-        # self.world.draw(self.canvas)
-        # self.world.particles.draw(self.canvas)
-
-        # if self.world.debug_use_absolute_camera:
-        #     screen.blit(
-        #         self.canvas,
-        #         (0, 0),
-        #     )
-        #     return
-
-        # projection = None
-
-        # if not self.group.view.contains(self.world.camera.absolute_rect):
-        #     logging.error("zoom was outside of what was rendered")
-        #     projection = self.scrollsurface
-        # else:
-        #     # Subsurface is used to zoom
-        #     r = self.world.camera.absolute_rect
-
-        #     # r.topleft = (
-        #     #     r.left - self.group.view.left,
-        #     #     r.top - self.group.view.top,
-        #     # )
-
-        #     projection = self.scrollsurface.subsurface(r)
-        #     projection = pygame.transform.scale(projection, self.world.screen_size)
-
-        # Upscale the
-        # projection = pygame.transform.scale(projection, self.world.screen_size)
-        # screen.blit(projection, (0, 0))
-
-        # screen.blit(projection, (0, 0))
 
     def event(self, event):
         if self.world.debug:

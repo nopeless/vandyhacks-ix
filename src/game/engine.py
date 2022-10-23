@@ -124,20 +124,20 @@ class Engine:
         """
         Process pygame events
         """
-        if event.keys[pygame.K_j]:
-            self.world.camera.pos -= (12, 0)
-        if event.keys[pygame.K_l]:
-            self.world.camera.pos += (12, 0)
-
-        if event.keys[pygame.K_i]:
-            self.world.camera.pos += (0, -12)
-        if event.keys[pygame.K_k]:
-            self.world.camera.pos += (0, 12)
 
     def update(self, keys):
         """
         Updates itself based on 60hz
         """
+        if keys[pygame.K_j]:
+            self.world.camera.pos -= (1, 0)
+        if keys[pygame.K_l]:
+            self.world.camera.pos += (1, 0)
+
+        if keys[pygame.K_i]:
+            self.world.camera.pos += (0, -1)
+        if keys[pygame.K_k]:
+            self.world.camera.pos += (0, 1)
         move = (
             pygame.Vector2(
                 keyboard.pygame_keys_x_axis(keys),
@@ -167,4 +167,3 @@ class Engine:
         # print("player where", self.world.player.rect)
         # self.world.camera.target = self.world.player.rect.center
         self.world.camera.update()
-        print(self.world.camera.rect)
